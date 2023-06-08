@@ -5,11 +5,10 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Linq;
 
+var server = new HttpListener();
 try
 {
     var config = await ReadConfigAsync();
-
-    var server = new HttpListener();
     server.Prefixes.Add(config.Prefix);
     foreach (var item in config.EndPoints)
     {
@@ -22,20 +21,22 @@ try
         HttpListenerContext context = await server.GetContextAsync();
         var request = context.Request;
         var response = context.Response;
-        var user = context.User;
+        //var user = context.User;
 
         var data = await SelectPageAsync(request, response, config.EndPoints.ToArray());
 
         DisplayRequiestInfo(request);
         await SendResponseAsync(response, data);
     }
-    server.Stop(); // stop server
-    server.Close();// closing HttpListener
-
 }
 catch (System.Exception ex)
 {
     System.Console.WriteLine(ex.Message);
+}
+finally
+{
+    server.Stop(); // stop server
+    server.Close();// closing HttpListener
 }
 
 
