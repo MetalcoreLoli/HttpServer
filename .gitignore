@@ -1,0 +1,15 @@
+.config
+artifacts
+src/HttpServer/bin/Debug/net7.0
+src/HttpServer/bin/Release/net7.0/HttpServer
+src/HttpServer/bin/Release/net7.0/HttpServer.deps.json
+src/HttpServer/bin/Release/net7.0/HttpServer.dll
+src/HttpServer/bin/Release/net7.0/HttpServer.pdb
+src/HttpServer/bin/Release/net7.0/HttpServer.runtimeconfig.json
+src/HttpServer/obj/Debug/net7.0/ref
+src/HttpServer/obj/Debug/net7.0/refint
+src/HttpServer/obj/Debug/net7.0
+src/HttpServer/obj/Release/net7.0/ref
+src/HttpServer/obj/Release/net7.0/refint
+src/HttpServer/obj/Release/net7.0
+src/HttpServer/obj
