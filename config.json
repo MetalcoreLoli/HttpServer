@@ -1,0 +1,13 @@
+{
+    "Prefix": "http://localhost:1337/home/",
+    "EndPoints": [
+        {
+            "Url":"test",
+            "Page": "test.html"
+        },
+        {
+            "Url":"help",
+            "Page": "help.html"
+        }
+    ]
+}

@@ -2,30 +2,63 @@
 
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
+using System.Linq;
 
-var server = new HttpListener();
-server.Prefixes.Add("http://localhost:1337/home/");
-server.Start();// start server
-Info("server started");
-while (true)
+try
 {
-    HttpListenerContext context = await server.GetContextAsync();
-    var request = context.Request;
-    var response = context.Response;
-    var user = context.User;
-    DisplayRequiestInfo(request);
-    await SendResponseAsync(response);
-}
-server.Stop(); // stop server
-server.Close();// closing HttpListener
+    var config = await ReadConfigAsync();
 
-async Task SendResponseAsync(HttpListenerResponse response)
+    var server = new HttpListener();
+    server.Prefixes.Add(config.Prefix);
+    foreach (var item in config.EndPoints)
+    {
+        System.Console.WriteLine(item);
+    }
+    server.Start();// start server
+    Info("server started");
+    while (true)
+    {
+        HttpListenerContext context = await server.GetContextAsync();
+        var request = context.Request;
+        var response = context.Response;
+        var user = context.User;
+
+        var data = await SelectPageAsync(request, response, config.EndPoints.ToArray());
+
+        DisplayRequiestInfo(request);
+        await SendResponseAsync(response, data);
+    }
+    server.Stop(); // stop server
+    server.Close();// closing HttpListener
+
+}
+catch (System.Exception ex)
+{
+    System.Console.WriteLine(ex.Message);
+}
+
+
+async Task<byte[]> SelectPageAsync(HttpListenerRequest request, HttpListenerResponse response, EndPoint[] endpoints)
+{
+    var endpoint = request.RawUrl;
+    Info("trying to select page with endpoint: " + endpoint);
+    if (endpoint is not "/home" or not "/home/")
+    {
+        foreach (var ep in endpoints.Where(ep => endpoint == "/home/" + ep.Url || endpoint == "/home/" + ep.Url + '/'))
+        {
+            return await File.ReadAllBytesAsync(ep.Page);
+        }
+        return await GetHomePageAsync();
+    }
+    return await GetHomePageAsync();
+}
+
+async Task SendResponseAsync(HttpListenerResponse response, byte[] buffer)
 {
     Info("sending response..");
-    var data = await GetHomePageAsync();
 
     //var buffer = Encoding.UTF8.GetBytes(data);
-    var buffer = data;
     response.ContentLength64 = buffer.Length;
     using var output = response.OutputStream;
     await output.WriteAsync(buffer);
@@ -48,7 +81,16 @@ void DisplayRequiestInfo(HttpListenerRequest request)
     Console.WriteLine($"headers: ");
     foreach(string? header in request.Headers.Keys)
         Console.WriteLine($"\t{header}:{request.Headers[header]}");
-
 }
 
 void Info(string msg) => System.Console.WriteLine("[INFO] " + msg);
+
+async Task<Config> ReadConfigAsync()
+{
+    var json = await File.ReadAllTextAsync("config.json");
+    var config = JsonConvert.DeserializeObject<Config>(json);
+    return config;
+}
+
+readonly record struct EndPoint(string Url, string Page);
+readonly record struct Config(string Prefix, List<EndPoint> EndPoints);
