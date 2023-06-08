@@ -1,5 +1,6 @@
 .config
 artifacts
+src/HttpServer/bin
 src/HttpServer/bin/Debug/net7.0
 src/HttpServer/bin/Release/net7.0/HttpServer
 src/HttpServer/bin/Release/net7.0/HttpServer.deps.json
