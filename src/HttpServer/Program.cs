@@ -25,7 +25,7 @@ try
 
         var data = await SelectPageAsync(request, config.EndPoints.ToArray());
 
-        DisplayRequiestInfo(request);
+        DisplayRequestInfo(request);
         await SendResponseAsync(response, data);
     }
 }
@@ -68,7 +68,7 @@ async Task<byte[]> GetHomePageAsync()
     return await File.ReadAllBytesAsync("index.html");
 }
 
-void DisplayRequiestInfo(HttpListenerRequest request)
+void DisplayRequestInfo(HttpListenerRequest request)
 {
     Info("request info:");
     Console.WriteLine($"app address: {request.LocalEndPoint}");
