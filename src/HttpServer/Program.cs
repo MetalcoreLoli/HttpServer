@@ -44,13 +44,9 @@ async Task<byte[]> SelectPageAsync(HttpListenerRequest request, HttpListenerResp
 {
     var endpoint = request.RawUrl;
     Info("trying to select page with endpoint: " + endpoint);
-    if (endpoint is not "/home" or not "/home/")
+    foreach (var ep in endpoints.Where(ep => endpoint == ep.Url || endpoint == ep.Url + '/'))
     {
-        foreach (var ep in endpoints.Where(ep => endpoint == "/home/" + ep.Url || endpoint == "/home/" + ep.Url + '/'))
-        {
-            return await File.ReadAllBytesAsync(ep.Page);
-        }
-        return await GetHomePageAsync();
+        return await File.ReadAllBytesAsync(ep.Page);
     }
     return await GetHomePageAsync();
 }
