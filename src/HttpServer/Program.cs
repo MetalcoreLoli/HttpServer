@@ -23,7 +23,7 @@ try
         var response = context.Response;
         //var user = context.User;
 
-        var data = await SelectPageAsync(request, response, config.EndPoints.ToArray());
+        var data = await SelectPageAsync(request, config.EndPoints.ToArray());
 
         DisplayRequiestInfo(request);
         await SendResponseAsync(response, data);
@@ -40,7 +40,7 @@ finally
 }
 
 
-async Task<byte[]> SelectPageAsync(HttpListenerRequest request, HttpListenerResponse response, EndPoint[] endpoints)
+async Task<byte[]> SelectPageAsync(HttpListenerRequest request, EndPoint[] endpoints)
 {
     var endpoint = request.RawUrl;
     Info("trying to select page with endpoint: " + endpoint);
